@@ -5,7 +5,7 @@ import {
   Building2, TrendingUp, Users, Edit, Save, X
 } from 'lucide-react';
 
-const SimpleDashboard = () => {
+const SimpleDashboard = ({ activeModule = 'DASHBOARD' }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [editingRoom, setEditingRoom] = useState(null);
 
@@ -80,8 +80,22 @@ const SimpleDashboard = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">🏨 Hotel Management</h1>
-          <p className="text-gray-500">จัดการง่าย ใช้งานสะดวก</p>
+          <h1 className="text-3xl font-bold text-gray-900">
+            {activeModule === 'DASHBOARD' && '🏨 Hotel Management'}
+            {activeModule === 'ROOMS' && '🏨 จัดการห้องพัก'}
+            {activeModule === 'GUESTS' && '👥 จัดการลูกค้า'}
+            {activeModule === 'FINANCE' && '💰 การเงิน'}
+            {activeModule === 'REPORTS' && '📊 รายงาน'}
+            {activeModule === 'MAINTENANCE' && '🔧 แจ้งซ่อม'}
+          </h1>
+          <p className="text-gray-500">
+            {activeModule === 'DASHBOARD' && 'จัดการง่าย ใช้งานสะดวก'}
+            {activeModule === 'ROOMS' && 'จัดการห้องพักทั้งหมด'}
+            {activeModule === 'GUESTS' && 'จัดการข้อมูลลูกค้า'}
+            {activeModule === 'FINANCE' && 'จัดการรายรับ-รายจ่าย'}
+            {activeModule === 'REPORTS' && 'รายงานสรุปต่างๆ'}
+            {activeModule === 'MAINTENANCE' && 'จัดการการซ่อมบำรุง'}
+          </p>
         </div>
         <div className="text-right">
           <div className="font-semibold">{new Date().toLocaleDateString('th-TH')}</div>
