@@ -5,22 +5,7 @@ import {
   User, Lock, AlertCircle, CheckCircle, Database, BarChart3, Settings, Receipt, UserCheck, Bell, Monitor, Calendar
 } from 'lucide-react';
 import Dashboard from './components/Dashboard';
-import AdvancedDashboard from './components/AdvancedDashboard';
-import BookingCalendar from './components/BookingCalendar';
-import RoomManagement from './components/RoomManagement';
-import Finance from './components/Finance';
-import Guests from './components/Guests';
-import Reports from './components/Reports';
-import Maintenance from './components/Maintenance';
-import Gallery from './components/Gallery';
-import DataSync from './components/DataSync';
-import Analytics from './components/Analytics';
-import SystemSettings from './components/SystemSettings';
-import SlipManager from './components/SlipManager';
-import UserManagement from './components/UserManagement';
-import NotificationSystem from './components/NotificationSystem';
-import DocumentGenerator from './components/DocumentGenerator';
-import SystemMonitor from './components/SystemMonitor';
+import CompleteDashboard from './components/CompleteDashboard';
 
 const App = () => {
   // Authentication State
@@ -32,22 +17,6 @@ const App = () => {
   // App State
   const MODULES = [
     { id: 'DASHBOARD', title: 'แดชบอร์ด', icon: LayoutDashboard },
-    { id: 'ADVANCED_DASHBOARD', title: 'Dashboard ขั้นสูง', icon: BarChart3 },
-    { id: 'CALENDAR', title: 'ปฏิทินการจอง', icon: Calendar },
-    { id: 'ROOMS_DAILY', title: 'ห้องพักรายวัน', icon: Building2 },
-    { id: 'ROOMS_MONTHLY', title: 'ห้องพักรายเดือน', icon: Calendar },
-    { id: 'FINANCE', title: 'บัญชีและการเงิน', icon: CircleDollarSign },
-    { id: 'GUESTS_DAILY', title: 'ลูกค้ารายวัน', icon: Users },
-    { id: 'GUESTS_MONTHLY', title: 'ผู้เช่ารายเดือน', icon: UserCheck },
-    { id: 'SLIPS', title: 'จัดการสลิป OCR', icon: Receipt },
-    { id: 'REPORTS', title: 'รายงาน', icon: FileText },
-    { id: 'MAINTENANCE', title: 'แจ้งซ่อม', icon: ShieldAlert },
-    { id: 'GALLERY', title: 'รูปภาพ/สลิป', icon: Camera },
-    { id: 'DATASYNC', title: 'ซิงค์ข้อมูล', icon: Database },
-    { id: 'ANALYTICS', title: 'Analytics', icon: BarChart3 },
-    { id: 'USERS', title: 'จัดการผู้ใช้', icon: UserCheck },
-    { id: 'DOCUMENTS', title: 'สร้างเอกสาร', icon: FileText },
-    { id: 'MONITOR', title: 'ตรวจสอบระบบ', icon: Monitor },
     { id: 'SETTINGS', title: 'ตั้งค่าระบบ', icon: Settings }
   ];
 
@@ -364,24 +333,7 @@ const App = () => {
 
         {/* Main Content */}
         <main className="p-4 md:p-6 flex-1 overflow-auto">
-          {activeModule === 'DASHBOARD' && <Dashboard stats={dashboardStats} />}
-          {activeModule === 'ADVANCED_DASHBOARD' && <AdvancedDashboard />}
-          {activeModule === 'CALENDAR' && <BookingCalendar />}
-          {activeModule === 'ROOMS_DAILY' && <RoomManagement rooms={rooms} setRooms={setRooms} roomType="daily" />}
-          {activeModule === 'ROOMS_MONTHLY' && <RoomManagement rooms={rooms} setRooms={setRooms} roomType="monthly" />}
-          {activeModule === 'FINANCE' && <Finance transactions={transactions} />}
-          {activeModule === 'GUESTS_DAILY' && <Guests guests={guests} guestType="daily" />}
-          {activeModule === 'GUESTS_MONTHLY' && <Guests guests={guests} guestType="monthly" />}
-          {activeModule === 'SLIPS' && <SlipManager />}
-          {activeModule === 'REPORTS' && <Reports />}
-          {activeModule === 'MAINTENANCE' && <Maintenance maintenanceList={maintenanceList} />}
-          {activeModule === 'GALLERY' && <Gallery />}
-          {activeModule === 'DATASYNC' && <DataSync />}
-          {activeModule === 'ANALYTICS' && <Analytics />}
-          {activeModule === 'USERS' && <UserManagement />}
-          {activeModule === 'DOCUMENTS' && <DocumentGenerator />}
-          {activeModule === 'MONITOR' && <SystemMonitor />}
-          {activeModule === 'SETTINGS' && <SystemSettings />}
+          <CompleteDashboard />
         </main>
       </div>
     </div>
