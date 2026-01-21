@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, Building2, CircleDollarSign, Users, 
   FileText, ShieldAlert, Camera, Menu, X, LogOut,
-  User, Lock, AlertCircle, CheckCircle, Database, BarChart3, Settings
+  User, Lock, AlertCircle, CheckCircle, Database, BarChart3, Settings, Receipt
 } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import RoomManagement from './components/RoomManagement';
@@ -14,6 +14,7 @@ import Gallery from './components/Gallery';
 import DataSync from './components/DataSync';
 import Analytics from './components/Analytics';
 import SystemSettings from './components/SystemSettings';
+import SlipManager from './components/SlipManager';
 
 const App = () => {
   // Authentication State
@@ -28,6 +29,7 @@ const App = () => {
     { id: 'ROOMS', title: 'จัดการห้องพัก', icon: Building2 },
     { id: 'FINANCE', title: 'บัญชีและการเงิน', icon: CircleDollarSign },
     { id: 'GUESTS', title: 'ฐานข้อมูลลูกค้า', icon: Users },
+    { id: 'SLIPS', title: 'จัดการสลิป OCR', icon: Receipt },
     { id: 'REPORTS', title: 'รายงาน', icon: FileText },
     { id: 'MAINTENANCE', title: 'แจ้งซ่อม', icon: ShieldAlert },
     { id: 'GALLERY', title: 'รูปภาพ/สลิป', icon: Camera },
@@ -346,6 +348,7 @@ const App = () => {
           {activeModule === 'ROOMS' && <RoomManagement rooms={rooms} setRooms={setRooms} />}
           {activeModule === 'FINANCE' && <Finance transactions={transactions} />}
           {activeModule === 'GUESTS' && <Guests guests={guests} />}
+          {activeModule === 'SLIPS' && <SlipManager />}
           {activeModule === 'REPORTS' && <Reports />}
           {activeModule === 'MAINTENANCE' && <Maintenance maintenanceList={maintenanceList} />}
           {activeModule === 'GALLERY' && <Gallery />}
