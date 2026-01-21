@@ -50,6 +50,21 @@ const App = () => {
       setIsAuthenticated(true);
       loadAllData();
     }
+
+    // Handle window resize
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setSidebarOpen(true);
+      } else {
+        setSidebarOpen(false);
+      }
+    };
+
+    // Set initial sidebar state based on screen size
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const loadAllData = () => {
@@ -212,37 +227,62 @@ const App = () => {
   return (
     <div className="min-h-screen bg-slate-100 font-sans flex text-slate-900">
       
+      {/* Sidebar Overlay */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-50 bg-slate-900 text-white transition-all duration-300 ${isSidebarOpen ? 'w-64' : 'w-0 overflow-hidden'}`}>
+      <div className={`fixed inset-y-0 left-0 z-50 bg-slate-900 text-white transition-all duration-300 ease-in-out lg:relative lg:translate-x-0 ${
+        isSidebarOpen ? 'translate-x-0 w-64' : '-translate-x-full w-64 lg:w-16'
+      }`}>
         <div className="p-6 border-b border-slate-800 flex justify-between items-center">
-          <div>
+          <div className={`transition-opacity duration-300 ${isSidebarOpen || window.innerWidth >= 1024 ? 'opacity-100' : 'opacity-0 lg:opacity-0'}`}>
             <span className="font-black text-xl">HOTEL PRO</span>
             <p className="text-xs text-slate-400 mt-1">Management System</p>
           </div>
-          <button onClick={() => setSidebarOpen(false)} className="p-2 hover:bg-slate-800 rounded-lg">
+          <button 
+            onClick={() => setSidebarOpen(!isSidebarOpen)} 
+            className="p-2 hover:bg-slate-800 rounded-lg lg:hidden"
+          >
             <X size={20} />
           </button>
         </div>
+        
         <nav className="p-4 space-y-2">
           {MODULES.map(m => (
             <button 
               key={m.id} 
-              onClick={() => {setActiveModule(m.id); setSidebarOpen(false);}} 
-              className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all ${
+              onClick={() => {
+                setActiveModule(m.id); 
+                if (window.innerWidth < 1024) setSidebarOpen(false);
+              }} 
+              className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all group ${
                 activeModule === m.id 
                   ? 'bg-blue-600 shadow-lg' 
                   : 'hover:bg-slate-800'
               }`}
+              title={m.title}
             >
-              <m.icon size={20}/> 
-              <span className="font-semibold">{m.title}</span>
+              <m.icon size={20} className="flex-shrink-0" /> 
+              <span className={`font-semibold transition-opacity duration-300 ${
+                isSidebarOpen || window.innerWidth >= 1024 ? 'opacity-100' : 'opacity-0 lg:opacity-0'
+              }`}>
+                {m.title}
+              </span>
             </button>
           ))}
         </nav>
+        
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-800">
-          <div className="mb-3 p-3 bg-slate-800 rounded-xl">
+          <div className={`mb-3 p-3 bg-slate-800 rounded-xl transition-all duration-300 ${
+            isSidebarOpen || window.innerWidth >= 1024 ? 'opacity-100' : 'opacity-0 lg:opacity-0'
+          }`}>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center font-bold text-blue-600">
+              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center font-bold text-blue-600 flex-shrink-0">
                 {currentUser?.full_name?.charAt(0) || 'U'}
               </div>
               <div className="flex-1 min-w-0">
@@ -253,32 +293,43 @@ const App = () => {
           </div>
           <button
             onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 p-3 bg-rose-600 hover:bg-rose-700 rounded-xl font-bold transition-all"
+            className={`w-full flex items-center justify-center gap-2 p-3 bg-rose-600 hover:bg-rose-700 rounded-xl font-bold transition-all ${
+              isSidebarOpen || window.innerWidth >= 1024 ? 'opacity-100' : 'opacity-0 lg:opacity-0'
+            }`}
+            title="ออกจากระบบ"
           >
             <LogOut size={16} />
-            ออกจากระบบ
+            <span className={`transition-opacity duration-300 ${
+              isSidebarOpen || window.innerWidth >= 1024 ? 'opacity-100' : 'opacity-0 lg:opacity-0'
+            }`}>
+              ออกจากระบบ
+            </span>
           </button>
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col">
+      <div className={`flex-1 flex flex-col transition-all duration-300 ${
+        isSidebarOpen ? 'lg:ml-0' : 'lg:ml-0'
+      }`}>
         {/* Header */}
-        <header className="bg-white p-4 shadow-sm flex justify-between items-center sticky top-0 z-40">
+        <header className="bg-white p-4 shadow-sm flex justify-between items-center sticky top-0 z-30">
           <div className="flex items-center gap-4">
             <button 
-              onClick={() => setSidebarOpen(true)} 
+              onClick={() => setSidebarOpen(!isSidebarOpen)} 
               className="p-2 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
             >
               <Menu />
             </button>
             <div>
               <h1 className="font-bold text-lg">{MODULES.find(m => m.id === activeModule)?.title}</h1>
-              <p className="text-xs text-slate-500">ระบบจัดการโรงแรม</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center font-bold text-blue-600 cursor-pointer hover:bg-blue-200 transition-colors">
-              {currentUser?.full_name?.charAt(0) || 'U'}
+              <p className="text-xs text-slate-500">
+                {new Date().toLocaleDateString('th-TH', { 
+                  weekday: 'long', 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}
+              </p>
             </div>
           </div>
         </header>
