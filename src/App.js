@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, Building2, CircleDollarSign, Users, 
   FileText, ShieldAlert, Camera, Menu, X, LogOut,
-  User, Lock, AlertCircle, CheckCircle
+  User, Lock, AlertCircle, CheckCircle, Database, BarChart3, Settings
 } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import RoomManagement from './components/RoomManagement';
@@ -11,6 +11,9 @@ import Guests from './components/Guests';
 import Reports from './components/Reports';
 import Maintenance from './components/Maintenance';
 import Gallery from './components/Gallery';
+import DataSync from './components/DataSync';
+import Analytics from './components/Analytics';
+import SystemSettings from './components/SystemSettings';
 
 const App = () => {
   // Authentication State
@@ -27,7 +30,10 @@ const App = () => {
     { id: 'GUESTS', title: 'ฐานข้อมูลลูกค้า', icon: Users },
     { id: 'REPORTS', title: 'รายงาน', icon: FileText },
     { id: 'MAINTENANCE', title: 'แจ้งซ่อม', icon: ShieldAlert },
-    { id: 'GALLERY', title: 'รูปภาพ/สลิป', icon: Camera }
+    { id: 'GALLERY', title: 'รูปภาพ/สลิป', icon: Camera },
+    { id: 'DATASYNC', title: 'ซิงค์ข้อมูล', icon: Database },
+    { id: 'ANALYTICS', title: 'Analytics', icon: BarChart3 },
+    { id: 'SETTINGS', title: 'ตั้งค่าระบบ', icon: Settings }
   ];
 
   const [activeModule, setActiveModule] = useState('DASHBOARD');
@@ -343,6 +349,9 @@ const App = () => {
           {activeModule === 'REPORTS' && <Reports />}
           {activeModule === 'MAINTENANCE' && <Maintenance maintenanceList={maintenanceList} />}
           {activeModule === 'GALLERY' && <Gallery />}
+          {activeModule === 'DATASYNC' && <DataSync />}
+          {activeModule === 'ANALYTICS' && <Analytics />}
+          {activeModule === 'SETTINGS' && <SystemSettings />}
         </main>
       </div>
     </div>
