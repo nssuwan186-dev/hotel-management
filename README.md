@@ -34,3 +34,4 @@ This project is automatically deployed to GitHub Pages via GitHub Actions when c
 - GitHub Pages
 # Test token auth
 # Test deployment
+# Ready for deployment
