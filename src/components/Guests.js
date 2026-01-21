@@ -211,13 +211,6 @@ const Guests = ({ guests = [] }) => {
 };
 
 export default Guests;
-                  <td className="p-4 text-sm text-slate-600">{guest.email || '-'}</td>
-                  <td className="p-4 text-center font-bold">{guest.room || '-'}</td>
-                  <td className="p-4 text-center text-sm">{guest.check_in}</td>
-                  <td className="p-4 text-center">
-                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${guest.status === 'active' ? 'bg-blue-100 text-blue-600' : 'bg-slate-100 text-slate-600'}`}>
-                      {guest.status === 'active' ? 'อยู่ระหว่างพัก' : 'เช็คเอาท์แล้ว'}
-                    </span>
                   </td>
                 </tr>
               ))}

@@ -223,11 +223,6 @@ const Finance = ({ transactions = [] }) => {
 };
 
 export default Finance;
-          </button>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-slate-50">
               <tr>
                 <th className="text-left p-4 text-xs font-black text-slate-600 uppercase">วันที่</th>
                 <th className="text-left p-4 text-xs font-black text-slate-600 uppercase">ประเภท</th>

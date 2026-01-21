@@ -269,15 +269,6 @@ const Maintenance = ({ maintenanceList = [] }) => {
 };
 
 export default Maintenance;
-        </div>
-      </div>
-
-      <div className="space-y-3">
-        {maintenanceList.map(item => (
-          <div key={item.id} className="bg-white p-5 rounded-2xl shadow-sm border hover:shadow-md transition-all">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
                   <span className="font-black text-lg">ห้อง {item.room}</span>
                   <span className={`px-3 py-1 rounded-full text-xs font-bold ${
                     item.priority === 'สูง' ? 'bg-rose-100 text-rose-600' : 

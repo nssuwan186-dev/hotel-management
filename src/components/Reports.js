@@ -220,12 +220,5 @@ const Reports = () => {
 };
 
 export default Reports;
-          <h3 className="font-bold text-lg">รายงานลูกค้า</h3>
-          <p className="text-sm text-slate-500 mt-1">วิเคราะห์ข้อมูลลูกค้า</p>
-        </button>
-      </div>
-    </div>
-  );
-};
 
 export default Reports;
