@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/hotel-management/static/css/main.e3fdb2a3.css",
+    "main.js": "/hotel-management/static/js/main.d69795af.js",
+    "index.html": "/hotel-management/index.html",
+    "main.e3fdb2a3.css.map": "/hotel-management/static/css/main.e3fdb2a3.css.map",
+    "main.d69795af.js.map": "/hotel-management/static/js/main.d69795af.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e3fdb2a3.css",
+    "static/js/main.d69795af.js"
+  ]
+}
