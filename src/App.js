@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, Building2, CircleDollarSign, Users, 
   FileText, ShieldAlert, Camera, Menu, X, LogOut,
-  User, Lock, AlertCircle, CheckCircle, Database, BarChart3, Settings, Receipt, UserCheck, Bell, Monitor
+  User, Lock, AlertCircle, CheckCircle, Database, BarChart3, Settings, Receipt, UserCheck, Bell, Monitor, Calendar
 } from 'lucide-react';
 import Dashboard from './components/Dashboard';
+import AdvancedDashboard from './components/AdvancedDashboard';
+import BookingCalendar from './components/BookingCalendar';
 import RoomManagement from './components/RoomManagement';
 import Finance from './components/Finance';
 import Guests from './components/Guests';
@@ -30,9 +32,13 @@ const App = () => {
   // App State
   const MODULES = [
     { id: 'DASHBOARD', title: 'แดชบอร์ด', icon: LayoutDashboard },
-    { id: 'ROOMS', title: 'จัดการห้องพัก', icon: Building2 },
+    { id: 'ADVANCED_DASHBOARD', title: 'Dashboard ขั้นสูง', icon: BarChart3 },
+    { id: 'CALENDAR', title: 'ปฏิทินการจอง', icon: Calendar },
+    { id: 'ROOMS_DAILY', title: 'ห้องพักรายวัน', icon: Building2 },
+    { id: 'ROOMS_MONTHLY', title: 'ห้องพักรายเดือน', icon: Calendar },
     { id: 'FINANCE', title: 'บัญชีและการเงิน', icon: CircleDollarSign },
-    { id: 'GUESTS', title: 'ฐานข้อมูลลูกค้า', icon: Users },
+    { id: 'GUESTS_DAILY', title: 'ลูกค้ารายวัน', icon: Users },
+    { id: 'GUESTS_MONTHLY', title: 'ผู้เช่ารายเดือน', icon: UserCheck },
     { id: 'SLIPS', title: 'จัดการสลิป OCR', icon: Receipt },
     { id: 'REPORTS', title: 'รายงาน', icon: FileText },
     { id: 'MAINTENANCE', title: 'แจ้งซ่อม', icon: ShieldAlert },
@@ -359,9 +365,13 @@ const App = () => {
         {/* Main Content */}
         <main className="p-4 md:p-6 flex-1 overflow-auto">
           {activeModule === 'DASHBOARD' && <Dashboard stats={dashboardStats} />}
-          {activeModule === 'ROOMS' && <RoomManagement rooms={rooms} setRooms={setRooms} />}
+          {activeModule === 'ADVANCED_DASHBOARD' && <AdvancedDashboard />}
+          {activeModule === 'CALENDAR' && <BookingCalendar />}
+          {activeModule === 'ROOMS_DAILY' && <RoomManagement rooms={rooms} setRooms={setRooms} roomType="daily" />}
+          {activeModule === 'ROOMS_MONTHLY' && <RoomManagement rooms={rooms} setRooms={setRooms} roomType="monthly" />}
           {activeModule === 'FINANCE' && <Finance transactions={transactions} />}
-          {activeModule === 'GUESTS' && <Guests guests={guests} />}
+          {activeModule === 'GUESTS_DAILY' && <Guests guests={guests} guestType="daily" />}
+          {activeModule === 'GUESTS_MONTHLY' && <Guests guests={guests} guestType="monthly" />}
           {activeModule === 'SLIPS' && <SlipManager />}
           {activeModule === 'REPORTS' && <Reports />}
           {activeModule === 'MAINTENANCE' && <Maintenance maintenanceList={maintenanceList} />}
