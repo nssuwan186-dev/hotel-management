@@ -5,7 +5,7 @@ import {
   User, Lock, AlertCircle, CheckCircle, Database, BarChart3, Settings, Receipt, UserCheck, Bell, Monitor, Calendar
 } from 'lucide-react';
 import Dashboard from './components/Dashboard';
-import CompleteDashboard from './components/CompleteDashboard';
+import SimpleDashboard from './components/SimpleDashboard';
 
 const App = () => {
   // Authentication State
@@ -333,7 +333,7 @@ const App = () => {
 
         {/* Main Content */}
         <main className="p-4 md:p-6 flex-1 overflow-auto">
-          <CompleteDashboard />
+          <SimpleDashboard />
         </main>
       </div>
     </div>
