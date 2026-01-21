@@ -167,7 +167,7 @@ const RoomManagement = ({ rooms, setRooms, roomType }) => {
                 </span>
               </div>
 
-              {room.guest && (
+              {room.guest ? (
                 <div className="space-y-2 mb-4 p-3 bg-gray-50 rounded-lg">
                   <div className="flex items-center gap-2">
                     <User size={14} className="text-gray-600" />
@@ -175,24 +175,28 @@ const RoomManagement = ({ rooms, setRooms, roomType }) => {
                   </div>
                   <div className="flex items-center gap-2">
                     <Phone size={14} className="text-gray-600" />
-                    <span className="text-sm">{room.phone}</span>
+                    <span className="text-sm">{room.phone || "-"}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Calendar size={14} className="text-gray-600" />
-                    <span className="text-sm">เข้าพัก: {room.checkIn}</span>
+                    <span className="text-sm">เข้าพัก: {room.checkIn || "-"}</span>
                   </div>
                   {(room.elecStart > 0 || room.waterStart > 0) && (
                     <div className="flex gap-4 text-xs text-gray-600">
                       <div className="flex items-center gap-1">
                         <Zap size={12} />
-                        ไฟ: {room.elecStart}
+                        ไฟ: {room.elecStart || "-"}
                       </div>
                       <div className="flex items-center gap-1">
                         <Droplets size={12} />
-                        น้ำ: {room.waterStart}
+                        น้ำ: {room.waterStart || "-"}
                       </div>
                     </div>
                   )}
+                </div>
+              ) : (
+                <div className="mb-4 p-3 bg-gray-50 rounded-lg text-center text-gray-500">
+                  <span className="text-sm">ไม่มีผู้เข้าพัก</span>
                 </div>
               )}
 
