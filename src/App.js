@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, Building2, CircleDollarSign, Users, 
   FileText, ShieldAlert, Camera, Menu, X, LogOut,
-  User, Lock, AlertCircle, CheckCircle, Database, BarChart3, Settings, Receipt
+  User, Lock, AlertCircle, CheckCircle, Database, BarChart3, Settings, Receipt, UserCheck, Bell, Monitor
 } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import RoomManagement from './components/RoomManagement';
@@ -15,6 +15,10 @@ import DataSync from './components/DataSync';
 import Analytics from './components/Analytics';
 import SystemSettings from './components/SystemSettings';
 import SlipManager from './components/SlipManager';
+import UserManagement from './components/UserManagement';
+import NotificationSystem from './components/NotificationSystem';
+import DocumentGenerator from './components/DocumentGenerator';
+import SystemMonitor from './components/SystemMonitor';
 
 const App = () => {
   // Authentication State
@@ -35,6 +39,9 @@ const App = () => {
     { id: 'GALLERY', title: 'รูปภาพ/สลิป', icon: Camera },
     { id: 'DATASYNC', title: 'ซิงค์ข้อมูล', icon: Database },
     { id: 'ANALYTICS', title: 'Analytics', icon: BarChart3 },
+    { id: 'USERS', title: 'จัดการผู้ใช้', icon: UserCheck },
+    { id: 'DOCUMENTS', title: 'สร้างเอกสาร', icon: FileText },
+    { id: 'MONITOR', title: 'ตรวจสอบระบบ', icon: Monitor },
     { id: 'SETTINGS', title: 'ตั้งค่าระบบ', icon: Settings }
   ];
 
@@ -340,6 +347,13 @@ const App = () => {
               </p>
             </div>
           </div>
+          
+          <div className="flex items-center gap-3">
+            <NotificationSystem />
+            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center font-bold text-blue-600 cursor-pointer hover:bg-blue-200 transition-colors">
+              {currentUser?.full_name?.charAt(0) || 'U'}
+            </div>
+          </div>
         </header>
 
         {/* Main Content */}
@@ -354,6 +368,9 @@ const App = () => {
           {activeModule === 'GALLERY' && <Gallery />}
           {activeModule === 'DATASYNC' && <DataSync />}
           {activeModule === 'ANALYTICS' && <Analytics />}
+          {activeModule === 'USERS' && <UserManagement />}
+          {activeModule === 'DOCUMENTS' && <DocumentGenerator />}
+          {activeModule === 'MONITOR' && <SystemMonitor />}
           {activeModule === 'SETTINGS' && <SystemSettings />}
         </main>
       </div>
