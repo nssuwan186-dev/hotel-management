@@ -1,152 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  LayoutDashboard, Building2, CircleDollarSign, Users, 
-  FileText, ShieldAlert, Camera, Menu, X, LogOut,
-  User, Lock, AlertCircle, CheckCircle, Database, BarChart3, Settings, Receipt, UserCheck, Bell, Monitor, Calendar
-} from 'lucide-react';
-import Dashboard from './components/Dashboard';
+import React, { useState } from 'react';
+import { Building2, User, Lock, AlertCircle } from 'lucide-react';
 import SimpleDashboard from './components/SimpleDashboard';
 
 const App = () => {
-  // Authentication State
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
   const [loginForm, setLoginForm] = useState({ username: '', password: '' });
   const [loginError, setLoginError] = useState('');
 
-  // App State
-  const MODULES = [
-    { id: 'DASHBOARD', title: 'แดชบอร์ด', icon: LayoutDashboard },
-    { id: 'SETTINGS', title: 'ตั้งค่าระบบ', icon: Settings }
-  ];
-
-  const [activeModule, setActiveModule] = useState('DASHBOARD');
-  const [isSidebarOpen, setSidebarOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  // Data State
-  const [rooms, setRooms] = useState([]);
-  const [guests, setGuests] = useState([]);
-  const [transactions, setTransactions] = useState([]);
-  const [maintenanceList, setMaintenanceList] = useState([]);
-  const [dashboardStats, setDashboardStats] = useState(null);
-
-  // Initialize data on mount
-  useEffect(() => {
-    const savedAuth = localStorage.getItem('hotelAuth');
-    if (savedAuth) {
-      const authData = JSON.parse(savedAuth);
-      setCurrentUser(authData.user);
-      setIsAuthenticated(true);
-      loadAllData();
-    }
-
-    // Handle window resize
-    const handleResize = () => {
-      if (window.innerWidth >= 1024) {
-        setSidebarOpen(true);
-      } else {
-        setSidebarOpen(false);
-      }
-    };
-
-    // Set initial sidebar state based on screen size
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const loadAllData = () => {
-    // Initialize with sample data
-    const sampleRooms = Array.from({ length: 30 }, (_, i) => {
-      const floor = Math.floor(i / 10) + 1;
-      const roomNum = (i % 10) + 1;
-      const roomId = `${floor}${roomNum.toString().padStart(2, '0')}`;
-      
-      return {
-        id: roomId,
-        status: 'ว่าง',
-        price: 500,
-        type: 'รายวัน',
-        floor: floor,
-        guest: null,
-        phone: null,
-        checkIn: null,
-        elecStart: 0,
-        waterStart: 0,
-        maintenance: null
-      };
-    });
-
-    setRooms(sampleRooms);
-    
-    // Sample stats
-    setDashboardStats({
-      rooms: {
-        total_rooms: 30,
-        occupied: 8,
-        available: 20,
-        cleaning: 1,
-        maintenance: 1,
-        occupancy_rate: 27
-      },
-      financial: {
-        monthly_revenue: 45000,
-        monthly_expense: 25000,
-        net_profit: 20000
-      },
-      recent_activity: [
-        { id: 1, type: 'รายรับ', description: 'ชำระค่าห้อง 201', amount: 500, date: '2026-01-20', category: 'ค่าห้องพัก' },
-        { id: 2, type: 'รายจ่าย', description: 'ซ่อมแอร์ห้อง 305', amount: -2500, date: '2026-01-19', category: 'ซ่อมบำรุง' }
-      ],
-      maintenance_alerts: [
-        { id: 1, room: '305', issue: 'เครื่องปรับอากาศเสีย', priority: 'สูง', report_date: '2026-01-19' }
-      ]
-    });
-
-    setTransactions([
-      { id: 1, date: '2026-01-20', type: 'รายรับ', category: 'ค่าห้องพัก', amount: 500, description: 'ชำระค่าห้อง 201' },
-      { id: 2, date: '2026-01-19', type: 'รายจ่าย', category: 'ซ่อมบำรุง', amount: -2500, description: 'ซ่อมแอร์ห้อง 305' }
-    ]);
-
-    setGuests([
-      { id: 1, name: 'สมชาย ใจดี', phone: '081-234-5678', email: 'somchai@email.com', room: '201', check_in: '2026-01-18', status: 'active' }
-    ]);
-
-    setMaintenanceList([
-      { id: 1, room: '305', issue: 'เครื่องปรับอากาศเสีย', priority: 'สูง', status: 'รอดำเนินการ', report_date: '2026-01-19', reporter: 'แม่บ้าน' }
-    ]);
-  };
-
   const handleLogin = (e) => {
     e.preventDefault();
-    setLoginError('');
-    setLoading(true);
-
-    // Simple authentication
     if (loginForm.username === 'admin' && loginForm.password === 'admin123') {
-      const user = { id: 1, username: 'admin', full_name: 'ผู้ดูแลระบบ', role: 'admin' };
-      setCurrentUser(user);
       setIsAuthenticated(true);
-      localStorage.setItem('hotelAuth', JSON.stringify({ user }));
-      loadAllData();
     } else {
       setLoginError('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
     }
-    setLoading(false);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('hotelAuth');
-    setIsAuthenticated(false);
-    setCurrentUser(null);
-    setRooms([]);
-    setGuests([]);
-    setTransactions([]);
-  };
-
-  // LOGIN SCREEN
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-500 via-blue-600 to-purple-700 flex items-center justify-center p-4">
@@ -198,10 +67,9 @@ const App = () => {
 
               <button
                 type="submit"
-                disabled={loading}
-                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 rounded-xl font-black text-lg hover:shadow-lg transition-all disabled:opacity-50"
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 rounded-xl font-black text-lg hover:shadow-lg transition-all"
               >
-                {loading ? 'กำลังเข้าสู่ระบบ...' : 'เข้าสู่ระบบ'}
+                เข้าสู่ระบบ
               </button>
             </div>
 
@@ -215,127 +83,8 @@ const App = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 font-sans flex text-slate-900">
-      
-      {/* Sidebar Overlay */}
-      {isSidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-50 bg-slate-900 text-white transition-all duration-300 ease-in-out lg:relative lg:translate-x-0 ${
-        isSidebarOpen ? 'translate-x-0 w-64' : '-translate-x-full w-64 lg:w-16'
-      }`}>
-        <div className="p-6 border-b border-slate-800 flex justify-between items-center">
-          <div className={`transition-opacity duration-300 ${isSidebarOpen || window.innerWidth >= 1024 ? 'opacity-100' : 'opacity-0 lg:opacity-0'}`}>
-            <span className="font-black text-xl">HOTEL PRO</span>
-            <p className="text-xs text-slate-400 mt-1">Management System</p>
-          </div>
-          <button 
-            onClick={() => setSidebarOpen(!isSidebarOpen)} 
-            className="p-2 hover:bg-slate-800 rounded-lg lg:hidden"
-          >
-            <X size={20} />
-          </button>
-        </div>
-        
-        <nav className="p-4 space-y-2">
-          {MODULES.map(m => (
-            <button 
-              key={m.id} 
-              onClick={() => {
-                setActiveModule(m.id); 
-                if (window.innerWidth < 1024) setSidebarOpen(false);
-              }} 
-              className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all group ${
-                activeModule === m.id 
-                  ? 'bg-blue-600 shadow-lg' 
-                  : 'hover:bg-slate-800'
-              }`}
-              title={m.title}
-            >
-              <m.icon size={20} className="flex-shrink-0" /> 
-              <span className={`font-semibold transition-opacity duration-300 ${
-                isSidebarOpen || window.innerWidth >= 1024 ? 'opacity-100' : 'opacity-0 lg:opacity-0'
-              }`}>
-                {m.title}
-              </span>
-            </button>
-          ))}
-        </nav>
-        
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-800">
-          <div className={`mb-3 p-3 bg-slate-800 rounded-xl transition-all duration-300 ${
-            isSidebarOpen || window.innerWidth >= 1024 ? 'opacity-100' : 'opacity-0 lg:opacity-0'
-          }`}>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center font-bold text-blue-600 flex-shrink-0">
-                {currentUser?.full_name?.charAt(0) || 'U'}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="font-bold text-sm truncate">{currentUser?.full_name}</p>
-                <p className="text-xs text-slate-400">{currentUser?.role}</p>
-              </div>
-            </div>
-          </div>
-          <button
-            onClick={handleLogout}
-            className={`w-full flex items-center justify-center gap-2 p-3 bg-rose-600 hover:bg-rose-700 rounded-xl font-bold transition-all ${
-              isSidebarOpen || window.innerWidth >= 1024 ? 'opacity-100' : 'opacity-0 lg:opacity-0'
-            }`}
-            title="ออกจากระบบ"
-          >
-            <LogOut size={16} />
-            <span className={`transition-opacity duration-300 ${
-              isSidebarOpen || window.innerWidth >= 1024 ? 'opacity-100' : 'opacity-0 lg:opacity-0'
-            }`}>
-              ออกจากระบบ
-            </span>
-          </button>
-        </div>
-      </div>
-
-      <div className={`flex-1 flex flex-col transition-all duration-300 ${
-        isSidebarOpen ? 'lg:ml-0' : 'lg:ml-0'
-      }`}>
-        {/* Header */}
-        <header className="bg-white p-4 shadow-sm flex justify-between items-center sticky top-0 z-30">
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={() => setSidebarOpen(!isSidebarOpen)} 
-              className="p-2 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
-            >
-              <Menu />
-            </button>
-            <div>
-              <h1 className="font-bold text-lg">{MODULES.find(m => m.id === activeModule)?.title}</h1>
-              <p className="text-xs text-slate-500">
-                {new Date().toLocaleDateString('th-TH', { 
-                  weekday: 'long', 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
-                })}
-              </p>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-3">
-            <NotificationSystem />
-            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center font-bold text-blue-600 cursor-pointer hover:bg-blue-200 transition-colors">
-              {currentUser?.full_name?.charAt(0) || 'U'}
-            </div>
-          </div>
-        </header>
-
-        {/* Main Content */}
-        <main className="p-4 md:p-6 flex-1 overflow-auto">
-          <SimpleDashboard />
-        </main>
-      </div>
+    <div className="min-h-screen bg-slate-100">
+      <SimpleDashboard />
     </div>
   );
 };
