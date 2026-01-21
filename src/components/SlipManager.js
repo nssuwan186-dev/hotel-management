@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Upload, Camera, FileImage, Eye, Trash2, Download, CheckCircle, AlertCircle, Loader } from 'lucide-react';
-import { OCRService, GoogleDriveService, RoomRateCalculator } from '../services/integrationServices';
+import { Upload, Camera, FileImage, Eye, Trash2, Download, CheckCircle, AlertCircle, Loader, Zap } from 'lucide-react';
+import { RoomRateCalculator } from '../services/integrationServices';
+import { EnhancedOCRService } from '../services/enhancedOCR';
 
 const SlipManager = () => {
   const [slips, setSlips] = useState([]);
@@ -8,48 +9,22 @@ const SlipManager = () => {
   const [processing, setProcessing] = useState(false);
   const [selectedSlip, setSelectedSlip] = useState(null);
 
-  // Initialize services with API key
-  const ocrService = new OCRService(process.env.REACT_APP_GOOGLE_API_KEY);
+  // Initialize services
+  const ocrService = new EnhancedOCRService(process.env.REACT_APP_GOOGLE_API_KEY);
   const roomCalculator = new RoomRateCalculator();
 
-  // OCR Processing Function
+  // OCR Processing Function with enhanced feedback
   const processOCR = async (imageFile) => {
     setProcessing(true);
     
     try {
-      // Use real OCR service if API key is available
-      if (process.env.REACT_APP_GOOGLE_API_KEY) {
-        const ocrData = await ocrService.processImage(imageFile);
-        setProcessing(false);
-        return ocrData;
-      } else {
-        // Fallback to mock data
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        const mockData = {
-          amount: Math.floor(Math.random() * 10000) + 1000,
-          date: new Date().toISOString().split('T')[0],
-          time: new Date().toLocaleTimeString('th-TH'),
-          bankAccount: '1234567890',
-          reference: 'REF' + Math.random().toString(36).substr(2, 9).toUpperCase(),
-          transferType: 'โอนเงิน',
-          confidence: 0.95
-        };
-        setProcessing(false);
-        return mockData;
-      }
+      const ocrData = await ocrService.processImage(imageFile);
+      setProcessing(false);
+      return ocrData;
     } catch (error) {
       console.error('OCR processing error:', error);
       setProcessing(false);
-      // Return mock data on error
-      return {
-        amount: 0,
-        date: new Date().toISOString().split('T')[0],
-        time: new Date().toLocaleTimeString('th-TH'),
-        bankAccount: 'N/A',
-        reference: 'ERROR',
-        transferType: 'ไม่ระบุ',
-        confidence: 0.1
-      };
+      throw error;
     }
   };
 
@@ -181,16 +156,30 @@ const SlipManager = () => {
       {(uploading || processing) && (
         <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
           <div className="flex items-center gap-3">
-            <Loader className="animate-spin text-blue-600" size={20} />
+            <div className="relative">
+              <Loader className="animate-spin text-blue-600" size={20} />
+              <Zap className="absolute -top-1 -right-1 text-yellow-500" size={12} />
+            </div>
             <div>
               <p className="font-medium text-blue-900">
-                {processing ? 'กำลังประมวลผล OCR...' : 'กำลังอัปโหลด...'}
+                {processing ? '🤖 AI กำลังประมวลผล OCR...' : '📤 กำลังอัปโหลด...'}
               </p>
               <p className="text-sm text-blue-600">
-                {processing ? 'กำลังแยกข้อมูลจากรูปภาพ' : 'กำลังเตรียมไฟล์'}
+                {processing ? '🔍 กำลังแยกข้อมูลจากรูปภาพด้วย AI Vision' : '⏳ กำลังเตรียมไฟล์สำหรับประมวลผล'}
               </p>
             </div>
           </div>
+          {processing && (
+            <div className="mt-3 bg-blue-100 rounded-lg p-3">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-blue-700">🧠 AI Processing Status:</span>
+                <span className="font-mono text-blue-800">ANALYZING...</span>
+              </div>
+              <div className="mt-2 bg-blue-200 rounded-full h-2">
+                <div className="bg-blue-600 h-2 rounded-full animate-pulse" style={{width: '70%'}}></div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -290,25 +279,29 @@ const SlipManager = () => {
                       {slip.ocrData && (
                         <div className="space-y-1 text-sm">
                           <div className="flex justify-between">
-                            <span className="text-gray-600">จำนวนเงิน:</span>
+                            <span className="text-gray-600">💰 จำนวนเงิน:</span>
                             <span className="font-bold text-green-600">
                               ฿{slip.ocrData.amount.toLocaleString()}
                             </span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-600">วันที่:</span>
+                            <span className="text-gray-600">📅 วันที่:</span>
                             <span>{slip.ocrData.date}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-600">เวลา:</span>
+                            <span className="text-gray-600">⏰ เวลา:</span>
                             <span>{slip.ocrData.time}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-600">อ้างอิง:</span>
+                            <span className="text-gray-600">🏦 ธนาคาร:</span>
+                            <span className="text-xs">{slip.ocrData.bankName || 'ไม่ระบุ'}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">📋 อ้างอิง:</span>
                             <span className="font-mono text-xs">{slip.ocrData.reference}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-600">ความแม่นยำ:</span>
+                            <span className="text-gray-600">🤖 AI ความแม่นยำ:</span>
                             <span className={`font-bold ${
                               slip.ocrData.confidence > 0.9 ? 'text-green-600' : 
                               slip.ocrData.confidence > 0.7 ? 'text-yellow-600' : 'text-red-600'
@@ -316,6 +309,12 @@ const SlipManager = () => {
                               {(slip.ocrData.confidence * 100).toFixed(1)}%
                             </span>
                           </div>
+                          {slip.ocrData.processingTime && (
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">⚡ ประมวลผล:</span>
+                              <span className="text-xs">{slip.ocrData.processingTime}ms</span>
+                            </div>
+                          )}
                         </div>
                       )}
                       
