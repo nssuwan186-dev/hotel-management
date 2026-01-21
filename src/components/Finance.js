@@ -223,36 +223,3 @@ const Finance = ({ transactions = [] }) => {
 };
 
 export default Finance;
-              <tr>
-                <th className="text-left p-4 text-xs font-black text-slate-600 uppercase">วันที่</th>
-                <th className="text-left p-4 text-xs font-black text-slate-600 uppercase">ประเภท</th>
-                <th className="text-left p-4 text-xs font-black text-slate-600 uppercase">หมวดหมู่</th>
-                <th className="text-left p-4 text-xs font-black text-slate-600 uppercase">รายละเอียด</th>
-                <th className="text-right p-4 text-xs font-black text-slate-600 uppercase">จำนวนเงิน</th>
-              </tr>
-            </thead>
-            <tbody>
-              {transactions.slice(0, 20).map((trans, idx) => (
-                <tr key={trans.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
-                  <td className="p-4 text-sm">{trans.date}</td>
-                  <td className="p-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${trans.type === 'รายรับ' ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'}`}>
-                      {trans.type}
-                    </span>
-                  </td>
-                  <td className="p-4 text-sm">{trans.category}</td>
-                  <td className="p-4 text-sm">{trans.description}</td>
-                  <td className={`p-4 text-right font-black ${trans.type === 'รายรับ' ? 'text-emerald-600' : 'text-rose-600'}`}>
-                    {trans.type === 'รายรับ' ? '+' : ''}฿{Math.abs(trans.amount).toLocaleString()}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default Finance;

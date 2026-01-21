@@ -269,24 +269,6 @@ const Maintenance = ({ maintenanceList = [] }) => {
 };
 
 export default Maintenance;
-                  <span className="font-black text-lg">ห้อง {item.room}</span>
-                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                    item.priority === 'สูง' ? 'bg-rose-100 text-rose-600' : 
-                    item.priority === 'ปานกลาง' ? 'bg-amber-100 text-amber-600' : 
-                    'bg-slate-100 text-slate-600'
-                  }`}>
-                    {item.priority}
-                  </span>
-                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                    item.status === 'รอดำเนินการ' ? 'bg-amber-100 text-amber-600' : 
-                    item.status === 'กำลังดำเนินการ' ? 'bg-blue-100 text-blue-600' : 
-                    'bg-emerald-100 text-emerald-600'
-                  }`}>
-                    {item.status}
-                  </span>
-                </div>
-                <p className="text-slate-700 font-semibold">{item.issue}</p>
-                <p className="text-xs text-slate-500 mt-2">รายงานโดย: {item.reporter} • {item.report_date}</p>
               </div>
             </div>
           </div>

@@ -211,15 +211,3 @@ const Guests = ({ guests = [] }) => {
 };
 
 export default Guests;
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default Guests;
