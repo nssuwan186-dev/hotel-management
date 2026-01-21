@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Upload, Camera, FileImage, Eye, Trash2, Download, CheckCircle, AlertCircle, Loader } from 'lucide-react';
+import { OCRService, GoogleDriveService, RoomRateCalculator } from '../services/integrationServices';
 
 const SlipManager = () => {
   const [slips, setSlips] = useState([]);
@@ -7,26 +8,49 @@ const SlipManager = () => {
   const [processing, setProcessing] = useState(false);
   const [selectedSlip, setSelectedSlip] = useState(null);
 
+  // Initialize services with API key
+  const ocrService = new OCRService(process.env.REACT_APP_GOOGLE_API_KEY);
+  const roomCalculator = new RoomRateCalculator();
+
   // OCR Processing Function
   const processOCR = async (imageFile) => {
     setProcessing(true);
     
-    // Simulate OCR processing
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
-    // Mock OCR results
-    const ocrData = {
-      amount: Math.floor(Math.random() * 10000) + 1000,
-      date: new Date().toISOString().split('T')[0],
-      time: new Date().toLocaleTimeString('th-TH'),
-      bankAccount: '1234567890',
-      reference: 'REF' + Math.random().toString(36).substr(2, 9).toUpperCase(),
-      transferType: 'โอนเงิน',
-      confidence: 0.95
-    };
-    
-    setProcessing(false);
-    return ocrData;
+    try {
+      // Use real OCR service if API key is available
+      if (process.env.REACT_APP_GOOGLE_API_KEY) {
+        const ocrData = await ocrService.processImage(imageFile);
+        setProcessing(false);
+        return ocrData;
+      } else {
+        // Fallback to mock data
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        const mockData = {
+          amount: Math.floor(Math.random() * 10000) + 1000,
+          date: new Date().toISOString().split('T')[0],
+          time: new Date().toLocaleTimeString('th-TH'),
+          bankAccount: '1234567890',
+          reference: 'REF' + Math.random().toString(36).substr(2, 9).toUpperCase(),
+          transferType: 'โอนเงิน',
+          confidence: 0.95
+        };
+        setProcessing(false);
+        return mockData;
+      }
+    } catch (error) {
+      console.error('OCR processing error:', error);
+      setProcessing(false);
+      // Return mock data on error
+      return {
+        amount: 0,
+        date: new Date().toISOString().split('T')[0],
+        time: new Date().toLocaleTimeString('th-TH'),
+        bankAccount: 'N/A',
+        reference: 'ERROR',
+        transferType: 'ไม่ระบุ',
+        confidence: 0.1
+      };
+    }
   };
 
   // Upload and Process Slip
@@ -109,23 +133,26 @@ const SlipManager = () => {
 
   // Calculate room charges
   const calculateRoomCharges = (roomId, checkInDate, checkOutDate) => {
-    // Mock room data
-    const roomRates = {
-      '101': 1500, '102': 1500, '103': 1500,
-      '201': 2000, '202': 2000, '203': 2000,
-      '301': 2500, '302': 2500, '303': 2500
-    };
-
-    const rate = roomRates[roomId] || 1500;
-    const days = Math.ceil((new Date(checkOutDate) - new Date(checkInDate)) / (1000 * 60 * 60 * 24));
+    if (!roomId || !checkInDate || !checkOutDate) return null;
     
-    return {
-      roomRate: rate,
-      numberOfDays: days,
-      subtotal: rate * days,
-      tax: (rate * days) * 0.07,
-      total: (rate * days) * 1.07
-    };
+    return roomCalculator.calculateCharges(roomId, checkInDate, checkOutDate);
+  };
+
+  // Handle room calculation
+  const [roomCalc, setRoomCalc] = useState({
+    roomId: '',
+    checkInDate: '',
+    checkOutDate: '',
+    result: null
+  });
+
+  const handleRoomCalculation = () => {
+    if (roomCalc.roomId && roomCalc.checkInDate && roomCalc.checkOutDate) {
+      const result = calculateRoomCharges(roomCalc.roomId, roomCalc.checkInDate, roomCalc.checkOutDate);
+      setRoomCalc(prev => ({ ...prev, result }));
+    } else {
+      alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+    }
   };
 
   return (
@@ -341,11 +368,21 @@ const SlipManager = () => {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 หมายเลขห้อง
               </label>
-              <select className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+              <select 
+                value={roomCalc.roomId}
+                onChange={(e) => setRoomCalc(prev => ({ ...prev, roomId: e.target.value }))}
+                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              >
                 <option value="">เลือกห้อง</option>
                 <option value="101">101 - Standard (฿1,500)</option>
+                <option value="102">102 - Standard (฿1,500)</option>
+                <option value="103">103 - Standard (฿1,500)</option>
                 <option value="201">201 - Deluxe (฿2,000)</option>
+                <option value="202">202 - Deluxe (฿2,000)</option>
+                <option value="203">203 - Deluxe (฿2,000)</option>
                 <option value="301">301 - Suite (฿2,500)</option>
+                <option value="302">302 - Suite (฿2,500)</option>
+                <option value="303">303 - Suite (฿2,500)</option>
               </select>
             </div>
             <div>
@@ -354,6 +391,8 @@ const SlipManager = () => {
               </label>
               <input
                 type="date"
+                value={roomCalc.checkInDate}
+                onChange={(e) => setRoomCalc(prev => ({ ...prev, checkInDate: e.target.value }))}
                 className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
               />
             </div>
@@ -363,11 +402,16 @@ const SlipManager = () => {
               </label>
               <input
                 type="date"
+                value={roomCalc.checkOutDate}
+                onChange={(e) => setRoomCalc(prev => ({ ...prev, checkOutDate: e.target.value }))}
                 className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
               />
             </div>
             <div className="flex items-end">
-              <button className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">
+              <button 
+                onClick={handleRoomCalculation}
+                className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+              >
                 คำนวณ
               </button>
             </div>
@@ -376,24 +420,68 @@ const SlipManager = () => {
           {/* Calculation Result */}
           <div className="mt-6 p-4 bg-gray-50 rounded-lg">
             <h4 className="font-medium mb-3">ผลการคำนวณ</h4>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-              <div>
-                <span className="text-gray-600">ราคาห้อง/คืน:</span>
-                <p className="font-bold">฿1,500</p>
+            {roomCalc.result ? (
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                  <div>
+                    <span className="text-gray-600">ห้อง:</span>
+                    <p className="font-bold">{roomCalc.result.roomId}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">ราคา/คืน:</span>
+                    <p className="font-bold">฿{roomCalc.result.baseRate.toLocaleString()}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">จำนวนคืน:</span>
+                    <p className="font-bold">{roomCalc.result.nights} คืน</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">ค่าห้อง:</span>
+                    <p className="font-bold">฿{roomCalc.result.roomCharges.toLocaleString()}</p>
+                  </div>
+                </div>
+                
+                <div className="border-t pt-3">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div>
+                      <span className="text-gray-600">ยอดรวม:</span>
+                      <p className="font-bold">฿{roomCalc.result.subtotal.toLocaleString()}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">ค่าบริการ (10%):</span>
+                      <p className="font-bold">฿{roomCalc.result.serviceCharge.toLocaleString()}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">ภาษี (7%):</span>
+                      <p className="font-bold">฿{roomCalc.result.taxAmount.toLocaleString()}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">รวมสุทธิ:</span>
+                      <p className="font-bold text-green-600 text-lg">฿{roomCalc.result.total.toLocaleString()}</p>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div>
-                <span className="text-gray-600">จำนวนคืน:</span>
-                <p className="font-bold">2 คืน</p>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-500">
+                <div>
+                  <span>ห้อง:</span>
+                  <p>-</p>
+                </div>
+                <div>
+                  <span>ราคา/คืน:</span>
+                  <p>-</p>
+                </div>
+                <div>
+                  <span>จำนวนคืน:</span>
+                  <p>-</p>
+                </div>
+                <div>
+                  <span>รวมสุทธิ:</span>
+                  <p>-</p>
+                </div>
               </div>
-              <div>
-                <span className="text-gray-600">ยอดรวม:</span>
-                <p className="font-bold">฿3,000</p>
-              </div>
-              <div>
-                <span className="text-gray-600">รวมภาษี (7%):</span>
-                <p className="font-bold text-green-600">฿3,210</p>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
