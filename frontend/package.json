@@ -7,7 +7,7 @@
     "react-dom": "^18.2.0",
     "lucide-react": "^0.263.1"
   },
-  "homepage": "https://kali.github.io/hotel-management",
+  "homepage": "https://nssuwan186-dev.github.io/hotel-management",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
